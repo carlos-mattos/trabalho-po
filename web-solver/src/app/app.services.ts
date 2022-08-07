@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
+interface IVariables {
+    x1: number
+    x2: number
+}
+
 @Injectable({
     providedIn: 'root'
 })
-export class CarService {
+export class SolverService {
 
     url = 'http://localhost:3001';
 
@@ -14,12 +19,12 @@ export class CarService {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }
 
-    getCars() {
+    solveProblem({ x1, x2 }: IVariables) {
         try {
-            this.httpClient.get(`${this.url}/test`).subscribe(result => console.log(result))
-
+            return this.httpClient.post(`${this.url}/test`, { x1, x2 }).toPromise()
         } catch (error) {
             console.log(error)
+            return null
         }
     }
 

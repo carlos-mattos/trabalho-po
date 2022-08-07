@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from "@angular/forms"
-import { CarService } from "./app.services"
+import { SolverService } from "./app.services"
 
 @Component({
   selector: 'app-root',
@@ -8,9 +8,14 @@ import { CarService } from "./app.services"
 })
 export class AppComponent {
   inputForm: FormGroup
+  spinner: boolean
+  timeToExecute: number
+  result: any
 
-  constructor(private formBuilder: FormBuilder, private carService: CarService) {
+  constructor(private formBuilder: FormBuilder, private solverService: SolverService) {
     this.buildForm()
+    this.spinner = false
+    this.result = null
   }
 
   buildForm() {
@@ -21,9 +26,22 @@ export class AppComponent {
   }
 
 
-  onSubmit() {
-    console.log(this.inputForm.value)
-    this.carService.getCars()
+  async onSubmit() {
+    this.spinner = true
+    
+    this.result = null
+
+    const t1 = Date.now()
+    
+    const result = await this.solverService.solveProblem(this.inputForm.value)
+    
+    this.result = result
+
+    const t2 = Date.now()
+
+    this.timeToExecute = t2-t1
+
+    this.spinner = false
   }
 
 }

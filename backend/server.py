@@ -10,11 +10,13 @@ api = Api(app)
 
 class Test(Resource):
     @cross_origin()
-    def get(self):
-        result = runSolver()
-        return jsonify(result)
+    def post(self):
+        limit_x1 = request.json['x1']
+        limit_x2 = request.json['x2']
+        result = runSolver(limit_x1, limit_x2)
+        return result
 
 api.add_resource(Test, '/test') 
 
 if __name__ == '__main__':
-    app.run(port=3001)
+   app.run(port=3001)

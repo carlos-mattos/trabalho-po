@@ -1,40 +1,51 @@
-from unittest import result
 from pyomo.core.base.PyomoModel import ConcreteModel
 from pyomo.core.base.objective import Objective
 from pyomo.environ import *
-from flask import jsonify
-import time
 
-def runSolver(limit_x1, limit_x2):
+def runSolver(variables, lines):
     model = ConcreteModel()
 
-    model.x1 = Var(domain = NonNegativeReals)
-    model.x2 = Var(domain = NonNegativeReals)
+    for var in variables:
+        model.add_component(var, Var(within=NonNegativeReals))
+    
+    mountExpression = 8000 * model.area1
+    mountExpression += 10000 * model.area2
+    mountExpression += 80 * model.pessoas
+    mountExpression += 300 * model.maquinario
+    mountExpression += 1 * model.semente1
+    mountExpression += 2 * model.semente2
 
-    model.obj = Objective(expr = 3 * model.x1 + 5 * model.x2, sense = maximize)
+    model.obj = Objective(expr = mountExpression, sense = minimize)
 
-    model.c1 = Constraint(expr = model.x1 <= limit_x1)
-    model.c2 = Constraint(expr = 2 * model.x2 <= limit_x2)
-    model.c3 = Constraint(expr = 3 * model.x1 + 2 * model.x2 <= 18)
-
-    # model.pprint()
+    index = 1
+    for line in lines:
+        leftSide = line[:-2]
+        leftSide = [float(var) for var in leftSide]            
+        rightSide = line[-1]
+        rightSide = float(rightSide)
+        sign = line[-2]
+        mountExpression = leftSide[0] * model.area1
+        mountExpression += leftSide[1] * model.area2
+        mountExpression += leftSide[2] * model.pessoas
+        mountExpression += leftSide[3] * model.maquinario
+        mountExpression += leftSide[4] * model.semente1
+        mountExpression += leftSide[5] * model.semente2
+        if sign == '<=':
+            model.add_component('c' + str(index), Constraint(expr = mountExpression <= rightSide))
+        elif sign == '>=':
+            model.add_component('c' + str(index), Constraint(expr = mountExpression >= rightSide))
+        index += 1
 
     optimizer = SolverFactory('glpk')
 
     results = optimizer.solve(model, tee = False)
 
-    # print("status:", results.solver.status)
-
     cost = model.obj.expr()
     status = results.solver.status
     termination = results.solver.termination_condition
-    x1_value = model.x1.value
-    x2_value = model.x2.value
 
-    return jsonify(
-        result=cost,
-        status=status,
-        termination=termination,
-        x1_value=x1_value,
-        x2_value=x2_value
-    )
+    print(cost)
+    print(status)
+    print(termination)
+
+    return ""

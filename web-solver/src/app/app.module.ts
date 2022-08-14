@@ -3,6 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from "@angular/forms"
 import { HttpClientModule } from '@angular/common/http';
+import { NgxFileDropModule } from "ngx-file-drop"
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations"
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -11,7 +14,10 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxFileDropModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

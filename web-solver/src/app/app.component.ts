@@ -1,47 +1,62 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from "@angular/forms"
 import { SolverService } from "./app.services"
+import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
+import { ToastrService } from "ngx-toastr"
+
+interface IFilesArray {
+  name: string
+  lastModified: string
+  size: number
+}
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  inputForm: FormGroup
   spinner: boolean
   timeToExecute: number
-  result: any
+  files: IFilesArray[] = [];
+  formData: FormData
 
-  constructor(private formBuilder: FormBuilder, private solverService: SolverService) {
-    this.buildForm()
+  constructor(private solverService: SolverService, private toastrService: ToastrService) {
     this.spinner = false
-    this.result = null
+    this.formData = new FormData()
   }
 
-  buildForm() {
-    this.inputForm = this.formBuilder.group({
-      x1: this.formBuilder.control(0),
-      x2: this.formBuilder.control(0)
-    })
+  public dropped(files: NgxFileDropEntry[]) {
+    for (const droppedFile of files) {
+      if (droppedFile.fileEntry.isFile) {
+        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+        fileEntry.file((file: File) => {
+
+          if (!file.type.includes("csv")) {
+            this.toastrService.error("Formato de arquivo inválido", "Erro")
+            return
+          }
+
+          if(this.files.length > 0){
+            this.files = []
+          }
+
+          this.files.push({
+            lastModified: new Date(file.lastModified).toLocaleDateString('pt-BR'),
+            name: file.name,
+            size: file.size
+          })
+
+          this.formData.append( 'file', new Blob([file], { type: 'text/csv' }), file.name);
+        });
+
+      } else {
+        const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
+        console.log(droppedFile.relativePath, fileEntry);
+      }
+    }
   }
 
-
-  async onSubmit() {
-    this.spinner = true
-    
-    this.result = null
-
-    const t1 = Date.now()
-    
-    const result = await this.solverService.solveProblem(this.inputForm.value)
-    
-    this.result = result
-
-    const t2 = Date.now()
-
-    this.timeToExecute = t2-t1
-
-    this.spinner = false
+  async submitFile(){
+    await this.solverService.solveProblem(this.formData)
   }
 
 }

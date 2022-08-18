@@ -9,6 +9,10 @@ interface IFilesArray {
   size: number
 }
 
+interface IResultSolver{
+  ok: boolean
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,10 +22,12 @@ export class AppComponent {
   timeToExecute: number
   files: IFilesArray[] = [];
   formData: FormData
+  resultIsOk: boolean
 
   constructor(private solverService: SolverService, private toastrService: ToastrService) {
     this.spinner = false
     this.formData = new FormData()
+    this.resultIsOk = false
   }
 
   public dropped(files: NgxFileDropEntry[]) {
@@ -35,7 +41,7 @@ export class AppComponent {
             return
           }
 
-          if(this.files.length > 0){
+          if (this.files.length > 0) {
             this.files = []
           }
 
@@ -45,7 +51,7 @@ export class AppComponent {
             size: file.size
           })
 
-          this.formData.append( 'file', new Blob([file], { type: 'text/csv' }), file.name);
+          this.formData.append('file', new Blob([file], { type: 'text/csv' }), file.name);
         });
 
       } else {
@@ -55,8 +61,15 @@ export class AppComponent {
     }
   }
 
-  async submitFile(){
-    await this.solverService.solveProblem(this.formData)
+  async submitFile() {
+    this.spinner = true
+    const result = await this.solverService.solveProblem(this.formData) as IResultSolver
+    this.resultIsOk = result.ok
+    this.spinner = false
+  }
+
+  async downloadResults() {
+    await this.solverService.downloadPDF()
   }
 
 }

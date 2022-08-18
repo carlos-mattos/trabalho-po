@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { saveAs } from "file-saver"
+import { throwError } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -16,11 +18,22 @@ export class SolverService {
 
     solveProblem(data: FormData) {
         try {
-            return this.httpClient.post(`${this.url}/test`, data).toPromise()
+            return this.httpClient.post(`${this.url}/solve`, data).toPromise();
         } catch (error) {
             console.log(error)
             return null
         }
+    }
+
+    downloadPDF(): any {
+        var mediaType = 'application/pdf';
+        this.httpClient.post(`${this.url}/download-results`, { location: "results.pdf" }, { responseType: 'blob' }).subscribe(
+            (response) => {
+                var blob = new Blob([response], { type: mediaType });
+                saveAs(blob, 'results.pdf');
+            },
+            e => { throwError(e); }
+        );
     }
 
 }

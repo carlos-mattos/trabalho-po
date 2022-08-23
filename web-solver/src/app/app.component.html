@@ -22,14 +22,15 @@
   <title>Trabalho - PO</title>
 </head>
 
-<body>
+<body class="container">
 
-  <div class="container">
+  <main role="main">
+
 
     <div class="mt-5">
       <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)">
         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-          
+
           <div class="row">
             <div class="d-flex justify-content-center col-12 col-md-12">
               Arraste ou procure em seu sistema o seu arquivo .csv
@@ -59,7 +60,8 @@
       </table>
     </div>
 
-    <button type="button" (click)="submitFile()" class="btn btn-primary" [disabled]="!files || files.length === 0">Resolver</button>
+    <button type="button" (click)="submitFile()" class="btn btn-primary"
+      [disabled]="!files || files.length === 0">Resolver</button>
 
     <div class="row d-flex justify-content-center" *ngIf="spinner">
       <div class="spinner-border text-primary mt-5" role="status">
@@ -74,7 +76,7 @@
       <button type="button" (click)="downloadResults()" class="btn btn-success">Download</button>
     </div>
 
-  </div>
+  </main>
 
 </body>
 

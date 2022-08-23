@@ -11,7 +11,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 api = Api(app)
 
 def createPdf(result):
-    # if already exists, delete it
     if os.path.exists('result.pdf'):
         os.remove('result.pdf')
 
@@ -20,13 +19,17 @@ def createPdf(result):
     pdf.set_font("Arial", size = 15)
     pdf.cell(200, 10, txt = "Resultados", ln = 2, align = 'C')
     pdf.set_font("Arial", size = 13)
-    pdf.cell(200, 10, txt = "semente 1: " + str(result["semente1"]), ln = 2, align = 'L')
-    pdf.cell(200, 10, txt = "semente 2: " + str(result["semente2"]), ln = 2, align = 'L')
-    pdf.cell(200, 10, txt = "semente 3: " + str(result["semente3"]), ln = 2, align = 'L')
-    pdf.cell(200, 10, txt = "semente 4: " + str(result["semente4"]), ln = 2, align = 'L')
-    pdf.cell(200, 10, txt = "semente 5: " + str(result["semente5"]), ln = 2, align = 'L')
-    pdf.cell(200, 10, txt = "maquina: " + str(result["maquina"]), ln = 2, align = 'L')
-    pdf.cell(200, 10, txt = "pessoa: " + str(result["pessoa"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "lucro = " + str(result["custo"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "semente 1 = " + str(result["semente1"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "semente 2 = " + str(result["semente2"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "semente 3 = " + str(result["semente3"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "semente 4 = " + str(result["semente4"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "semente 5 = " + str(result["semente5"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "maquina = " + str(result["maquina"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "pessoa = " + str(result["pessoa"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "transporte1 = " + str(result["transporte1"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "transporte2 = " + str(result["transporte2"]), ln = 2, align = 'L')
+    pdf.cell(200, 10, txt = "gado = " + str(result["gado"]), ln = 2, align = 'L')
     pdf.output("results.pdf")  
 
 def formatCsvReceived():
